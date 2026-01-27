@@ -1,0 +1,74 @@
+# Configuration for Codebase Documentation Generator
+
+# Repository Settings
+repositories:
+  - name: backend
+    url: "file://./test_repo/backend"
+    local_path: "./test_repo/backend"
+    type: backend
+  - name: frontend
+    url: "file://./test_repo/frontend"
+    local_path: "./test_repo/frontend"
+    type: frontend
+
+# Output Directory
+output_dir: "./docs"
+
+# Functional Scopes (Tags)
+functional_scopes:
+  animal_management:
+    keywords: ["animal", "pet", "photo", "breed", "nutrition"]
+    paths: ["Animal", "Pet"]
+  order_processing:
+    keywords: ["order", "cart", "checkout", "shipping", "invoice"]
+    paths: ["Order", "Cart", "Checkout"]
+  payment:
+    keywords: ["payment", "bancontact", "paypal", "stripe", "credit card", "wallet"]
+    paths: ["Payment"]
+  product_catalog:
+     keywords: ["product", "category", "catalog", "inventory", "stock", "price"]
+     paths: ["Product", "Category"]
+  authentication:
+     keywords: ["auth", "login", "register", "user", "account", "profile", "password"]
+     paths: ["Auth", "User", "Account"]
+
+
+# AI Enhancement (optional)
+ai_enhancement:
+  enabled: true
+  provider: "claude"
+  api_key: "YOUR_CLAUDE_API_KEY"
+  model: "claude-sonnet-4-5-20250929"  # Latest Claude Sonnet 4 model
+
+# Exclude Patterns (glob format)
+exclude:
+  - "node_modules"
+  - "vendor"
+  - ".git"
+  - ".github"
+  - "dist"
+  - "build"
+  - "__pycache__"
+  - "*.lock"
+  - "*.log"
+
+# Language Specific Settings (optional customization)
+languages:
+  php:
+    extensions: [".php"]
+  javascript:
+    extensions: [".js", ".jsx", ".mjs", ".cjs"]
+  typescript:
+    extensions: [".ts", ".tsx"]
+  vue:
+    extensions: [".vue"]
+  mdx:
+    extensions: [".mdx"]
+  shell:
+    extensions: [".sh", ".bash"]
+  docker:
+    extensions: ["Dockerfile", ".dockerfile"]
+  twig:
+    extensions: [".twig"]
+  gherkin:
+    extensions: [".feature"]

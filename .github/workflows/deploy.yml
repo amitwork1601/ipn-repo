@@ -1,0 +1,76 @@
+name: Deploy Documentation to Azure
+
+on:
+  schedule:
+    # Run every 6 hours to check for changes
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+    # Allow manual trigger
+  repository_dispatch:
+    # Allow trigger from other repos via webhook
+    types: [update-docs]
+
+env:
+  ACR_NAME: myacr.azurecr.io  # REPLACE with your ACR Name
+  IMAGE_NAME: documentation-viewer
+  APP_SERVICE_NAME: my-doc-app  # REPLACE with your App Service Name
+  RESOURCE_GROUP: my-resource-group
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # Required for Azure login
+
+    steps:
+      # 1. Checkout this documentation repository
+      - name: Checkout Docs Repo
+        uses: actions/checkout@v4
+
+      # 2. Setup Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      # 3. Install dependencies
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      # 4. Generate Documentation
+      # This script will clone/pull the backend/frontend repos using the tokens provided
+      - name: Generate Documentation
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT_FOR_REPOS }} # PAT to access private source repos
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }} # Optional AI functions
+        run: |
+          # Ensure config uses real URLs for production (sed replacement or separate config)
+          # Assuming config.yaml is set for production or we swap it here
+          python generate_docs.py --force
+
+      # 5. Log in to Azure
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # 6. Log in to ACR
+      - name: Login to ACR
+        run: az acr login --name ${{ env.ACR_NAME }}
+
+      # 7. Build and Push Docker Image
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t ${{ env.ACR_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }} .
+          docker tag ${{ env.ACR_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ env.ACR_NAME }}/${{ env.IMAGE_NAME }}:latest
+          docker push ${{ env.ACR_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          docker push ${{ env.ACR_NAME }}/${{ env.IMAGE_NAME }}:latest
+
+      # 8. Deploy to App Service
+      - name: Deploy to App Service
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.APP_SERVICE_NAME }}
+          images: ${{ env.ACR_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}

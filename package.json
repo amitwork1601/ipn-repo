@@ -1,0 +1,23 @@
+{
+    "name": "documentation-explorer",
+    "version": "1.0.0",
+    "description": "Interactive documentation explorer for legacy application",
+    "scripts": {
+        "deploy": "vercel --prod",
+        "dev": "python -m mkdocs serve",
+        "build-verify": "tsc --noEmit"
+    },
+    "keywords": [
+        "documentation",
+        "explorer",
+        "viewer"
+    ],
+    "author": "",
+    "license": "MIT",
+    "dependencies": {},
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "@types/react": "^18.0.0",
+        "typescript": "^5.0.0"
+    }
+}
