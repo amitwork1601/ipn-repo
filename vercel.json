@@ -1,5 +1,15 @@
 {
-    "buildCommand": "pip install -r requirements.txt && python -m mkdocs build && cp -r docs/viewer site/ && cp docs/*.md site/ && cp docs/docs_index.json site/ && cp docs/login.html site/",
-    "outputDirectory": "site",
-    "installCommand": "npm install && pip install --upgrade pip"
+    "version": 2,
+    "builds": [
+        {
+            "src": "package.json",
+            "use": "@vercel/static-build",
+            "config": {
+                "distDir": "docs"
+            }
+        }
+    ],
+    "buildCommand": "python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt && python generate_docs.py",
+    "outputDirectory": "docs",
+    "framework": null
 }
