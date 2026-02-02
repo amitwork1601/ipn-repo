@@ -11,4 +11,7 @@ echo "Building Website with MkDocs..."
 # Use python -m mkdocs to ensure we use the installed module
 python -m mkdocs build --clean --site-dir site
 
+echo "Copying raw markdown for Interactive Explorer..."
+cp docs/*.md site/ 2>/dev/null || true
+
 echo "Build Complete!"
