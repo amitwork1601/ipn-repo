@@ -10,6 +10,7 @@ theme:
   name: material
   logo: assets/logo.jpg
   favicon: assets/favicon.jpg
+use_directory_urls: false
   palette:
     primary: green
     accent: green

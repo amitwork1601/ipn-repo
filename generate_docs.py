@@ -578,9 +578,16 @@ class MarkdownGenerator:
             
             if has_content:
                 section_lines.append(f"## {section_title}\n")
+                
+                # Derive slug from section title (e.g. "Backend" -> "backend")
+                section_slug = section_title.lower().split(' ')[0]
+                
                 for category in priority_order:
                     if category in tree and tree[category]:
-                        section_lines.append(f"### {category}\n")
+                        # Create generic anchor (e.g. #backend-controllers)
+                        cat_slug = category.lower()
+                        anchor = f"{{ #{section_slug}-{cat_slug} }}"
+                        section_lines.append(f"### {category} {anchor}\n")
                         section_lines.extend(self.generate_summary_lines(tree[category]))
                         section_lines.append("\n")
             return section_lines
