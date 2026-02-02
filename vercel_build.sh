@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e  # Exit on error
+
+echo "Installing Python dependencies..."
+pip install -r requirements.txt
+
+echo "Generating Documentation..."
+python generate_docs.py
+
+echo "Building Website with MkDocs..."
+# Use python -m mkdocs to ensure we use the installed module
+python -m mkdocs build --clean --site-dir site
+
+echo "Build Complete!"
