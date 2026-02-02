@@ -1,4 +1,5 @@
 {
+    "installCommand": "echo 'Skipping default install'",
     "buildCommand": "bash vercel_build.sh",
     "outputDirectory": "site",
     "framework": null
