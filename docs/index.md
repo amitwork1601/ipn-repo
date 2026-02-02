@@ -1,65 +1,45 @@
 # Legacy Documentation Explorer
 
-Welcome to the auto-generated documentation for the multi-repository legacy application system.
+Welcome to the auto-generated documentation for the **Legacy Application System**.
+This platform provides comprehensive technical documentation, visualizing the codebase structure, dependencies, and functional logic.
 
-## Overview
+## 🚀 Getting Started
 
-This documentation has been automatically generated from multiple code repositories to provide comprehensive insights into:
+If you are new to the project, here is how to navigate this documentation:
 
-- **Backend** - PHP/Symfony backend application
-- **Frontend** - JavaScript/Vue.js frontend application  
-- **CMS** - Content Management System
+1.  **Identify your Domain**: Are you working on the **Server-Side logic** or the **User Interface**?
+2.  **Choose your Scope**: Use the sidebar to navigate to the specific repository (Backend or Frontend).
+3.  **Search functionalities**: Use the search bar (top) or the **Explorer** tab to find specific classes, methods, or business logic.
 
-## Features
+---
 
-✨ **AI-Enhanced Summaries** - Intelligent descriptions powered by Claude Sonnet 4.5 AI
+## 📚 Repositories
 
-📦 **Multi-Repository Support** - Documentation from all three repositories in one place
+<div class="grid cards" markdown>
 
-🔍 **Categorized Navigation** - Organized by Controllers, Services, Entities, and more
+-   **Backend (PHP/Symfony)**
 
-📊 **Interactive Explorer** - Filter and search across all documentation
+    The core business logic, API endpoints, and data processing.
+    
+    *   [Browse Backend Controllers](SUMMARY.md#backend-controllers)
+    *   [Browse Backend Services](SUMMARY.md#backend-services)
+    *   [Browse Data Entities](SUMMARY.md#backend-entities)
 
-## Quick Links
+-   **Frontend (Vue.js/Nuxt)**
 
-- [📋 Full Documentation Index](SUMMARY.html) - Browse all documentation by category
-- [🔎 Interactive Explorer](explorer.html) - Search and filter documentation
+    The client-facing application, components, and state management.
 
-## Repositories Included
+    *   [Browse Vue Components](SUMMARY.md#frontend-components)
+    *   [Browse Frontend Stores](SUMMARY.md#frontend-stores)
+    *   [Browse UI Composables](SUMMARY.md#frontend-composables)
 
-This documentation covers code from the following repositories:
+</div>
 
-1. **Backend** - `ultrapremiumdirect/backend`
-2. **Frontend** - `ultrapremiumdirect/frontend`
-3. **CMS** - `ultrapremiumdirect/cms`
+## 🔍 Features
 
-## Categories
-
-The documentation is organized into the following categories:
-
-- **Controllers** - Request handlers and API endpoints
-- **Services** - Business logic and service classes
-- **Entities** - Data models and database entities
-- **Repositories** - Data access layers
-- **Commands** - CLI commands and scheduled tasks
-- **Events** - Event handlers and listeners
-- **Plugins** - Payment, Shipping, CMS, etc.
-- **Other** - Miscellaneous files and utilities
-
-## How to Use
-
-1. **Browse by Category**: Use the [Documentation Index](SUMMARY.html) to navigate through categorized code files
-2. **Search**: Use the search bar at the top to find specific files, functions, or classes
-3. **Interactive View**: Use the [Explorer](explorer.html) for advanced filtering and searching
-
-## Documentation Generation
-
-This documentation was automatically generated using:
-
-- **Parser**: Custom multi-language parsers for PHP, JavaScript, Vue, and more
-- **AI Enhancement**: Claude Sonnet 4.5 AI for intelligent summaries
-- **Generator**: Python-based documentation generator
-- **Output**: MkDocs Material theme
+*   **Dependency Graphing**: Visualize how services and controllers interact.
+*   **AI Summaries**: Intelligent explanations of complex classes.
+*   **Functional Scoping**: Filter code by domains (e.g., `Order`, `Animal`, `Payment`).
 
 ---
 

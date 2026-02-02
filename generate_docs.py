@@ -342,7 +342,13 @@ class GherkinParser:
 class MarkdownGenerator:
     def __init__(self, output_dir, ai_enhancer=None):
         self.output_dir = Path(output_dir)
-        self.tree = {}
+        self.output_dir = Path(output_dir)
+        # Tree is now a dict of dicts: repo_type -> category -> files
+        self.trees = {
+            'backend': {},
+            'frontend': {},
+            'other': {}
+        }
         self.ai_enhancer = ai_enhancer
         self.file_repo_map = {}  # filename -> repo name
         self.repo_type_map = {}  # repo name -> type (backend/frontend)
@@ -392,10 +398,14 @@ class MarkdownGenerator:
             return 'Plugins'
         return 'Other'
 
-    def add_to_tree(self, path_parts, link, category):
-        if category not in self.tree:
-            self.tree[category] = {}
-        current = self.tree[category]
+    def add_to_tree(self, path_parts, link, category, repo_type='other'):
+        # Determine which tree to use
+        target_tree = self.trees.get(repo_type, self.trees['other'])
+        
+        if category not in target_tree:
+            target_tree[category] = {}
+        current = target_tree[category]
+        
         start_idx = 0
         if path_parts[0] in ['src', 'app']:
             start_idx = 1
@@ -457,7 +467,8 @@ class MarkdownGenerator:
         
         # Add to navigation tree
         link = f"[{rel_path.name}]({safe_name})"
-        self.add_to_tree(rel_path.parts, link, category)
+        repo_type = self.repo_type_map.get(repo_name, 'other')
+        self.add_to_tree(rel_path.parts, link, category, repo_type)
 
         # Incremental Generation: Skip if file already exists to save API costs
         if doc_path.exists():
@@ -553,11 +564,36 @@ class MarkdownGenerator:
     def write_index(self):
         lines = ["# Documentation Index\n"]
         priority_order = ['Controllers', 'Services', 'Entities', 'Repositories', 'Commands', 'Events', 'Plugins', 'Other']
-        for category in priority_order:
-            if category in self.tree and self.tree[category]:
-                lines.append(f"## {category}\n")
-                lines.extend(self.generate_summary_lines(self.tree[category]))
-                lines.append("\n")
+        
+        # Helper to generate lines for a specific tree
+        def write_section(tree, section_title):
+            section_lines = []
+            has_content = False
+            
+            # Check if tree has any content
+            for cat in priority_order:
+                if cat in tree and tree[cat]:
+                    has_content = True
+                    break
+            
+            if has_content:
+                section_lines.append(f"## {section_title}\n")
+                for category in priority_order:
+                    if category in tree and tree[category]:
+                        section_lines.append(f"### {category}\n")
+                        section_lines.extend(self.generate_summary_lines(tree[category]))
+                        section_lines.append("\n")
+            return section_lines
+
+        # Write Backend Section
+        lines.extend(write_section(self.trees.get('backend', {}), "Backend"))
+        
+        # Write Frontend Section
+        lines.extend(write_section(self.trees.get('frontend', {}), "Frontend"))
+        
+        # Write Other Section
+        lines.extend(write_section(self.trees.get('other', {}), "Other / Shared"))
+
         with open(self.output_dir / "SUMMARY.md", 'w', encoding='utf-8') as f:
             f.write('\n'.join(lines))
 
@@ -583,10 +619,16 @@ class MarkdownGenerator:
                         summary += line
                 summary = summary.strip()[:200]
                 category = "Other"
-                for cat, items in self.tree.items():
-                    if self._file_in_category(md_file.name, items):
-                        category = cat
-                        break
+                category = "Other"
+                # Search in all trees
+                found = False
+                for r_type in self.trees:
+                    for cat, items in self.trees[r_type].items():
+                        if self._file_in_category(md_file.name, items):
+                            category = cat
+                            found = True
+                            break
+                    if found: break
                 repo = self.file_repo_map.get(md_file.name, "")
                 repo_type = self.repo_type_map.get(repo, "other")
                 tags = self.file_tags_map.get(md_file.name, [])
@@ -603,7 +645,7 @@ class MarkdownGenerator:
                 print(f"Warning: Could not process {md_file.name} for web index: {e}")
         index_data = {
             "files": files_data,
-            "categories": list(self.tree.keys()),
+            "categories": list(self.categories.keys()),
             "repos": list(set(self.file_repo_map.values())),
             "types": list(set(self.repo_type_map.values()))
         }
@@ -637,10 +679,16 @@ class MarkdownGenerator:
                 continue
             # Determine category for this file
             category = "Other"
-            for cat, items in self.tree.items():
-                if self._file_in_category(md_file.name, items):
-                    category = cat
-                    break
+            category = "Other"
+            # Search in all trees
+            found = False
+            for r_type in self.trees:
+                for cat, items in self.trees[r_type].items():
+                    if self._file_in_category(md_file.name, items):
+                        category = cat
+                        found = True
+                        break
+                if found: break
             # Skip files that belong to whitelist categories
             if category in whitelist_categories:
                 continue
@@ -653,17 +701,17 @@ class MarkdownGenerator:
                 merged_content.append(header + content)
                 merged_files.append(md_file.name)
                 # Remove from tree so it won't appear separately
-                # (simple approach: delete entry from tree)
-                for cat_items in self.tree.values():
-                    for key, val in list(cat_items.items()):
-                        if isinstance(val, str) and val.endswith(md_file.name):
-                            del cat_items[key]
+                for r_type in self.trees:
+                    for cat_items in self.trees[r_type].values():
+                        for key, val in list(cat_items.items()):
+                            if isinstance(val, str) and val.endswith(md_file.name):
+                                del cat_items[key]
                 md_file.unlink()
         if merged_content:
             with open(misc_path, 'w', encoding='utf-8') as f:
                 f.write('\n'.join(merged_content))
             # Add misc file to tree under "Other"
-            self.add_to_tree([misc_filename], f"[{misc_filename}]({misc_filename})", "Other")
+            self.add_to_tree([misc_filename], f"[{misc_filename}]({misc_filename})", "Other", "other")
             self.file_repo_map[misc_filename] = "merged"
 
 
@@ -689,9 +737,11 @@ def deploy_viewer_assets(output_dir, assets_dir="viewer_assets"):
 # ---------------------------------------------------------------------------
 def main():
     # Add Git to PATH if not found (fix for Windows environment issue)
-    git_path = r"C:\Program Files\Git\cmd"
-    if git_path not in os.environ['PATH']:
-        os.environ['PATH'] += os.pathsep + git_path
+    # Add Git to PATH if not found (fix for Windows environment issue)
+    if os.name == 'nt':
+        git_path = r"C:\Program Files\Git\cmd"
+        if git_path not in os.environ['PATH']:
+            os.environ['PATH'] += os.pathsep + git_path
 
     # Load Config
     try:
