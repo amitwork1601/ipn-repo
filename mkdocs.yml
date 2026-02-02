@@ -2,6 +2,7 @@ site_name: Legacy Documentation Explorer
 site_description: Auto-generated documentation for multi-repo legacy systems
 site_url: ""
 site_dir: site
+use_directory_urls: false
 # Force fresh build
 validation:
   omitted_files: ignore
@@ -10,7 +11,6 @@ theme:
   name: material
   logo: assets/logo.jpg
   favicon: assets/favicon.jpg
-use_directory_urls: false
   palette:
     primary: green
     accent: green
