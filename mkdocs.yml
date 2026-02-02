@@ -11,8 +11,8 @@ theme:
   logo: assets/logo.jpg
   favicon: assets/favicon.jpg
   palette:
-    primary: custom
-    accent: custom
+    primary: green
+    accent: green
   features:
     - navigation.sections
     - navigation.expand

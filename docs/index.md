@@ -11,6 +11,11 @@ If you are new to the project, here is how to navigate this documentation:
 2.  **Choose your Scope**: Use the sidebar to navigate to the specific repository (Backend or Frontend).
 3.  **Search functionalities**: Use the search bar (top) or the **Explorer** tab to find specific classes, methods, or business logic.
 
+## ⚡ Quick Links
+
+-   [📄 Full Documentation Index](SUMMARY.md) — Browse all documentation by category
+-   [🚀 Interactive Explorer](explorer.md) — Search and filter documentation
+
 ---
 
 ## 📚 Repositories
