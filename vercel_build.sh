@@ -2,7 +2,7 @@
 set -e  # Exit on error
 
 echo "Installing Python dependencies..."
-pip install -r requirements.txt
+pip install -r requirements.txt --break-system-packages
 
 echo "Generating Documentation..."
 python generate_docs.py
